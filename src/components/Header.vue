@@ -1,7 +1,7 @@
 <template>
   <header>
     <nav class="nav-bar">
-      <h2>Todo List</h2>
+      <router-link to="/todolist" class="link">Todo List</router-link>
       <h2>Weather</h2>
       <router-link to="/calculator" class="link">Calculator</router-link>
       <h2>Password generator</h2>
