@@ -1,40 +1,100 @@
 <template>
   <div class="todo-container">
+    <h2>Todo List</h2>
     <div class="todo-field">
-      <input type="text" v-model="task" maxlength="50" />
+      <input type="text" v-model="task.content" maxlength="50" class="input" />
       <button @click="addTask">Add Task</button>
     </div>
     <ul>
-      <li v-for="(task, index) in taskList" :key="index">
+      <li v-for="taskItem in filteredList" :key="taskItem.id">
         <div class="text-container">
-          <img src="../assets/icons/circle.svg" alt="." />
-          <p>{{ task }}</p>
+          <img src="../assets/icons/circle.svg" alt="*" />
+          <input type="checkbox" v-model="taskItem.isDone" class="checkbox" />
+          <p :class="{ done: taskItem.isDone }">{{ taskItem.content }}</p>
         </div>
-        <button @click="deleteTask(index)">
+        <button @click="deleteTask(taskItem.id)">
           <img src="../assets/icons/delete.svg" alt="Delete" />
         </button>
       </li>
     </ul>
+    <p v-if="taskList.length === 0">You don't have any tasks yet</p>
+    <p
+      v-if="
+        activeBtn === 'completed' &&
+        filteredList.length === 0 &&
+        taskList.length !== 0
+      "
+    >
+      You don't have any completed tasks yet
+    </p>
+    <p
+      v-if="
+        activeBtn === 'active' &&
+        filteredList.length === 0 &&
+        taskList.length !== 0
+      "
+    >
+      You don't have any active tasks yet
+    </p>
+    <div class="btns" v-show="taskList.length > 0">
+      <button
+        v-if="activeBtn === 'all' || activeBtn === 'active'"
+        @click="showCompleted"
+      >
+        Show completed tasks
+      </button>
+      <button v-if="activeBtn === 'completed'" @click="showActive">
+        Show active tasks
+      </button>
+      <button @click="showAll">Show all tasks</button>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
-const task = ref("");
+const task = ref({ content: "" });
 const taskList = ref([]);
 
 const addTask = () => {
-  if (task.value.trim() === "") return;
+  if (task.value.content.trim() === "") return;
 
-  taskList.value.push(task.value);
-  task.value = "";
+  taskList.value.push({
+    id: Date.now(),
+    content: task.value.content.trim(),
+    isDone: false,
+  });
+
+  task.value.content = "";
 };
 
-const deleteTask = (index) => {
-  taskList.value = taskList.value.filter(
-    (task, indexTask) => index !== indexTask
-  );
+const deleteTask = (id) => {
+  taskList.value = taskList.value.filter((task) => task.id !== id);
+};
+
+const activeBtn = ref("all");
+
+const filteredList = computed(() => {
+  if (activeBtn.value === "completed") {
+    return taskList.value.filter((task) => task.isDone);
+  }
+  if (activeBtn.value === "active") {
+    return taskList.value.filter((task) => !task.isDone);
+  }
+  return taskList.value;
+});
+
+const showCompleted = () => {
+  activeBtn.value = "completed";
+};
+
+const showActive = () => {
+  activeBtn.value = "active";
+};
+
+const showAll = () => {
+  activeBtn.value = "all";
 };
 </script>
 
@@ -72,11 +132,15 @@ li {
   gap: 10px;
 }
 
-input {
+.input {
   width: 80%;
   font-size: 24px;
   padding: 6px;
   border-radius: 6px;
+}
+
+h2 {
+  margin: 20px;
 }
 
 button {
@@ -99,5 +163,20 @@ button:hover {
 button:active {
   transform: scale(0.98);
   background-color: rgb(14, 113, 131);
+}
+
+.btns {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.done {
+  text-decoration-line: line-through;
+  text-decoration-color: #e49561;
+}
+
+.checkbox {
+  accent-color: #e49561;
 }
 </style>
