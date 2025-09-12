@@ -1,6 +1,7 @@
 <template>
   <header>
     <nav class="nav-bar">
+      <router-link to="/pomodoro" class="link">Pomodoro</router-link>
       <router-link to="/todolist" class="link">Todo List</router-link>
       <h2>Weather</h2>
       <router-link to="/calculator" class="link">Calculator</router-link>
