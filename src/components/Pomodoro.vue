@@ -1,16 +1,56 @@
 <template>
   <div class="container">
-    <div class="work">
-      <p class="text">Work</p>
-      <button class="btn">⏶</button>
+    <div
+      @click="focusTimer('work')"
+      class="work"
+      :class="{
+        active: activeTimer === 'work',
+        inactive: activeTimer === 'break',
+      }"
+    >
+      <p class="text" :class="{ activeTitle: activeTimer === 'work' }">Work</p>
+      <button
+        @click.stop="workTimerInc"
+        class="btn"
+        :class="{ hidden: activeTimer !== null }"
+      >
+        ⏶
+      </button>
       <div>{{ workTimer }}</div>
-      <button class="btn">⏷</button>
+      <button
+        @click.stop="workTimerDec"
+        class="btn"
+        :class="{ hidden: activeTimer !== null }"
+      >
+        ⏷
+      </button>
     </div>
-    <div class="break">
-      <p class="text">Break</p>
-      <button class="btn">⏶</button>
+    <div
+      @click="focusTimer('break')"
+      class="break"
+      :class="{
+        active: activeTimer === 'break',
+        inactive: activeTimer === 'work',
+      }"
+    >
+      <p class="text" :class="{ activeTitle: activeTimer === 'break' }">
+        Break
+      </p>
+      <button
+        @click.stop="breakTimerInc"
+        class="btn"
+        :class="{ hidden: activeTimer !== null }"
+      >
+        ⏶
+      </button>
       <div>{{ breakTimer }}</div>
-      <button class="btn">⏷</button>
+      <button
+        @click.stop="breakTimerDec"
+        class="btn"
+        :class="{ hidden: activeTimer !== null }"
+      >
+        ⏷
+      </button>
     </div>
   </div>
 </template>
@@ -21,6 +61,40 @@ import { ref } from "vue";
 const workTimer = ref(20);
 const breakTimer = ref(5);
 const activeTimer = ref(null);
+
+const focusTimer = (active) => {
+  if (activeTimer.value === null) {
+    activeTimer.value = active;
+  } else {
+    activeTimer.value = null;
+  }
+};
+
+const workTimerInc = () => {
+  workTimer.value++;
+};
+
+const workTimerDec = () => {
+  if (workTimer.value < 2) return;
+  workTimer.value--;
+};
+
+const breakTimerInc = () => {
+  breakTimer.value++;
+};
+
+const breakTimerDec = () => {
+  if (breakTimer.value < 2) return;
+  breakTimer.value--;
+};
+
+const timer = (time) => {
+  if (activeTimer.value === "work") {
+  }
+  if (activeTimer.value === "break") {
+  }
+  const timeLeft = ref(time * 60);
+};
 </script>
 
 <style scoped>
@@ -58,8 +132,27 @@ const activeTimer = ref(null);
   background-color: rgb(250, 255, 205);
 }
 
+.work.active,
+.break.active {
+  width: 100%;
+}
+
+.work.inactive,
+.break.inactive {
+  width: 0%;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .text {
   margin: 10px;
+}
+
+.activeTitle {
+  font-size: 60px;
+  position: relative;
+  top: -100px;
+  transition: all 0.5s ease;
 }
 
 .btn {
@@ -76,5 +169,10 @@ const activeTimer = ref(null);
   background: rgba(255, 255, 255, 0.4);
   transform: translateY(-2px);
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+}
+
+.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 </style>
