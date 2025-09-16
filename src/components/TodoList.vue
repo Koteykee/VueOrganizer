@@ -52,10 +52,15 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 const task = ref({ content: "" });
 const taskList = ref([]);
+
+const savedTasks = localStorage.getItem("tasks");
+if (savedTasks) {
+  taskList.value = JSON.parse(savedTasks);
+}
 
 const addTask = () => {
   if (task.value.content.trim() === "") return;
@@ -76,13 +81,14 @@ const deleteTask = (id) => {
 const activeBtn = ref("all");
 
 const filteredList = computed(() => {
+  let list = taskList.value;
   if (activeBtn.value === "completed") {
-    return taskList.value.filter((task) => task.isDone);
+    return list.filter((task) => task.isDone);
   }
   if (activeBtn.value === "active") {
-    return taskList.value.filter((task) => !task.isDone);
+    return list.filter((task) => !task.isDone);
   }
-  return taskList.value;
+  return [...list].sort((a, b) => a.isDone - b.isDone);
 });
 
 const showCompleted = () => {
@@ -96,6 +102,14 @@ const showActive = () => {
 const showAll = () => {
   activeBtn.value = "all";
 };
+
+watch(
+  taskList,
+  (newList) => {
+    localStorage.setItem("tasks", JSON.stringify(newList));
+  },
+  { deep: true }
+);
 </script>
 
 <style scoped>
