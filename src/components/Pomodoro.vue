@@ -16,7 +16,9 @@
       >
         ⏶
       </button>
-      <div>{{ activeTimer === "work" ? formattedTime : workTimer }}</div>
+      <div :class="{ timer: activeTimer !== null }">
+        {{ activeTimer === "work" ? formattedTime : workTimer }}
+      </div>
       <button
         @click.stop="workTimerDec"
         class="btn"
@@ -43,7 +45,9 @@
       >
         ⏶
       </button>
-      <div>{{ activeTimer === "break" ? formattedTime : breakTimer }}</div>
+      <div :class="{ timer: activeTimer !== null }">
+        {{ activeTimer === "break" ? formattedTime : breakTimer }}
+      </div>
       <button
         @click.stop="breakTimerDec"
         class="btn"
@@ -63,14 +67,16 @@ const breakTimer = ref(5);
 const activeTimer = ref(null);
 
 const focusTimer = (active) => {
+  if (activeTimer.value === active) {
+    stopTimer();
+    activeTimer.value = null;
+    return;
+  }
   if (activeTimer.value === null) {
     activeTimer.value = active;
     activeTimer.value === "work"
       ? timer(workTimer.value)
       : timer(breakTimer.value);
-  } else {
-    stopTimer();
-    activeTimer.value = null;
   }
 };
 
@@ -106,7 +112,13 @@ const timer = (time) => {
     } else {
       clearInterval(timerInterval);
       timerInterval = null;
-      activeTimer.value = null;
+      if (activeTimer.value === "work") {
+        activeTimer.value = "break";
+        timer(breakTimer.value);
+      } else {
+        activeTimer.value = "work";
+        timer(workTimer.value);
+      }
     }
   }, 1000);
 };
@@ -204,5 +216,12 @@ const formattedTime = computed(() => {
 .hidden {
   opacity: 0;
   pointer-events: none;
+}
+
+.timer {
+  font-size: 60px;
+  position: relative;
+  top: -50px;
+  transition: all 0.5s ease;
 }
 </style>
