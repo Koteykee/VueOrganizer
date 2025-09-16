@@ -16,7 +16,7 @@
       >
         ⏶
       </button>
-      <div>{{ workTimer }}</div>
+      <div>{{ activeTimer === "work" ? formattedTime : workTimer }}</div>
       <button
         @click.stop="workTimerDec"
         class="btn"
@@ -43,7 +43,7 @@
       >
         ⏶
       </button>
-      <div>{{ breakTimer }}</div>
+      <div>{{ activeTimer === "break" ? formattedTime : breakTimer }}</div>
       <button
         @click.stop="breakTimerDec"
         class="btn"
@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 const workTimer = ref(20);
 const breakTimer = ref(5);
@@ -65,7 +65,11 @@ const activeTimer = ref(null);
 const focusTimer = (active) => {
   if (activeTimer.value === null) {
     activeTimer.value = active;
+    activeTimer.value === "work"
+      ? timer(workTimer.value)
+      : timer(breakTimer.value);
   } else {
+    stopTimer();
     activeTimer.value = null;
   }
 };
@@ -88,13 +92,39 @@ const breakTimerDec = () => {
   breakTimer.value--;
 };
 
+const timeLeft = ref(0);
+let timerInterval = null;
+
 const timer = (time) => {
-  if (activeTimer.value === "work") {
-  }
-  if (activeTimer.value === "break") {
-  }
-  const timeLeft = ref(time * 60);
+  timeLeft.value = time * 60;
+
+  if (timerInterval) clearInterval(timerInterval);
+
+  timerInterval = setInterval(() => {
+    if (timeLeft.value > 0) {
+      timeLeft.value--;
+    } else {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      activeTimer.value = null;
+    }
+  }, 1000);
 };
+
+const stopTimer = () => {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+};
+
+const formattedTime = computed(() => {
+  const min = Math.floor(timeLeft.value / 60)
+    .toString()
+    .padStart(2, "0");
+  const sec = (timeLeft.value % 60).toString().padStart(2, "0");
+  return `${min}:${sec}`;
+});
 </script>
 
 <style scoped>
