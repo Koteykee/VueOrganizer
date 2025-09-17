@@ -1,5 +1,5 @@
 <template>
-  <div class="calc-container">
+  <div class="container">
     <div class="display">
       <input type="text" class="history" v-model="history" readonly />
       <input
@@ -205,7 +205,7 @@ function roundTo(num, digits) {
 </script>
 
 <style scoped>
-.calc-container {
+.container {
   width: 400px;
   margin: 50px auto;
   padding: 20px;
