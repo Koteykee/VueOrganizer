@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Welcome from "@/components/Welcome.vue";
 import Pomodoro from "@/components/Pomodoro.vue";
 import TodoList from "@/components/TodoList.vue";
-import Weather from "@/components/Weather/Weather.vue";
+import Weather from "@/components/Weather/WeatherSearch.vue";
 import Calculator from "@/components/Calculator.vue";
 import PasswordGenerator from "@/components/PasswordGenerator.vue";
 

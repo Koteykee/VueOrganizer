@@ -18,26 +18,33 @@
         <li
           v-for="searchResult in searchResults"
           :key="searchResult.id"
+          @click="getCity(searchResult.name)"
           class="city"
         >
-          {{ searchResult.place_name }}
+          {{ searchResult.name }}, {{ searchResult.country }}
         </li>
       </template>
     </ul>
   </div>
-  <div></div>
+  <div v-if="city !== ''">
+    <Suspense>
+      <WeatherData :city="city" />
+    </Suspense>
+  </div>
 </template>
 
 <script setup>
 import axios from "axios";
-import { ref } from "vue";
+import { ref, Suspense } from "vue";
 
-const APIKey =
-  "pk.eyJ1Ijoiam9obmtvbWFybmlja2kiLCJhIjoiY2t5NjFzODZvMHJkaDJ1bWx6OGVieGxreSJ9.IpojdT3U3NENknF6_WhR2Q";
+import WeatherData from "./WeatherData.vue";
+
+const APIKey = "11248aa345d4458b96283937251505";
 const searchQuery = ref("");
 const queryTimeout = ref(null);
 const searchResults = ref(null);
 const searchError = ref(null);
+const city = ref("");
 
 const getSearchResults = () => {
   clearTimeout(queryTimeout.value);
@@ -45,9 +52,9 @@ const getSearchResults = () => {
     if (searchQuery.value !== "") {
       try {
         const result = await axios.get(
-          `https://api.mapbox.com/geocoding/v5/mapbox.places/${searchQuery.value}.json?access_token=${APIKey}&types=place`
+          `http://api.weatherapi.com/v1/search.json?key=${APIKey}&q=${searchQuery.value}`
         );
-        searchResults.value = result.data.features;
+        searchResults.value = result.data;
       } catch {
         searchError.value = true;
       }
@@ -55,6 +62,12 @@ const getSearchResults = () => {
     }
     searchResults.value = null;
   }, 300);
+};
+
+const getCity = (searchResult) => {
+  city.value = searchResult;
+  searchResults.value = null;
+  searchQuery.value = "";
 };
 </script>
 
