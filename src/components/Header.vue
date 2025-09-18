@@ -3,7 +3,7 @@
     <nav class="nav-bar">
       <router-link to="/pomodoro" class="link">Pomodoro</router-link>
       <router-link to="/todolist" class="link">Todo List</router-link>
-      <h2>Weather</h2>
+      <router-link to="/weather" class="link">Weather</router-link>
       <router-link to="/calculator" class="link">Calculator</router-link>
       <router-link to="/passwordGenerator" class="link"
         >Password generator</router-link
