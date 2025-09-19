@@ -1,66 +1,89 @@
 <template>
   <div class="container">
-    <div
-      @click="focusTimer('work')"
-      class="work"
-      :class="{
-        active: activeTimer === 'work',
-        inactive: activeTimer === 'break',
-      }"
-    >
-      <p class="text" :class="{ activeTitle: activeTimer === 'work' }">Work</p>
-      <button
-        @click.stop="workTimerInc"
-        class="btn"
-        :class="{ hidden: activeTimer !== null }"
-      >
-        ⏶
-      </button>
-      <div :class="{ timer: activeTimer !== null }">
-        {{ activeTimer === "work" ? formattedTime : workTimer }}
+    <div class="wrapper">
+      <div class="volume-wrapper" @click.stop>
+        <Slider
+          v-model.number="volume"
+          :min="0"
+          :max="100"
+          :tooltips="false"
+          orientation="vertical"
+          direction="rtl"
+          class="slider"
+        />
+        <img src="../assets/icons/volume.svg" alt="Volume" class="volume" />
       </div>
-      <button
-        @click.stop="workTimerDec"
-        class="btn"
-        :class="{ hidden: activeTimer !== null }"
+      <div
+        @mousedown="focusTimer('work')"
+        class="work"
+        :class="{
+          active: activeTimer === 'work',
+          inactive: activeTimer === 'break',
+        }"
       >
-        ⏷
-      </button>
-    </div>
-    <div
-      @click="focusTimer('break')"
-      class="break"
-      :class="{
-        active: activeTimer === 'break',
-        inactive: activeTimer === 'work',
-      }"
-    >
-      <p class="text" :class="{ activeTitle: activeTimer === 'break' }">
-        Break
-      </p>
-      <button
-        @click.stop="breakTimerInc"
-        class="btn"
-        :class="{ hidden: activeTimer !== null }"
-      >
-        ⏶
-      </button>
-      <div :class="{ timer: activeTimer !== null }">
-        {{ activeTimer === "break" ? formattedTime : breakTimer }}
+        <p class="text" :class="{ activeTitle: activeTimer === 'work' }">
+          Work
+        </p>
+        <button
+          @click.stop="workTimerInc"
+          class="btn"
+          :class="{ hidden: activeTimer !== null }"
+        >
+          ⏶
+        </button>
+        <div :class="{ timer: activeTimer !== null }">
+          {{ activeTimer === "work" ? formattedTime : workTimer }}
+        </div>
+        <button
+          @click.stop="workTimerDec"
+          class="btn"
+          :class="{ hidden: activeTimer !== null }"
+        >
+          ⏷
+        </button>
       </div>
-      <button
-        @click.stop="breakTimerDec"
-        class="btn"
-        :class="{ hidden: activeTimer !== null }"
+      <div
+        @click="focusTimer('break')"
+        class="break"
+        :class="{
+          active: activeTimer === 'break',
+          inactive: activeTimer === 'work',
+        }"
       >
-        ⏷
-      </button>
+        <p class="text" :class="{ activeTitle: activeTimer === 'break' }">
+          Break
+        </p>
+        <button
+          @click.stop="breakTimerInc"
+          class="btn"
+          :class="{ hidden: activeTimer !== null }"
+        >
+          ⏶
+        </button>
+        <div :class="{ timer: activeTimer !== null }">
+          {{ activeTimer === "break" ? formattedTime : breakTimer }}
+        </div>
+        <button
+          @click.stop="breakTimerDec"
+          class="btn"
+          :class="{ hidden: activeTimer !== null }"
+        >
+          ⏷
+        </button>
+      </div>
     </div>
+    <audio
+      ref="alarm"
+      class="alarm"
+      src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/41203/beep.mp3"
+    ></audio>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
+
+import Slider from "@vueform/slider";
 
 const workTimer = ref(20);
 const breakTimer = ref(5);
@@ -112,6 +135,7 @@ const timer = (time) => {
     } else {
       clearInterval(timerInterval);
       timerInterval = null;
+      playAudio();
       if (activeTimer.value === "work") {
         activeTimer.value = "break";
         timer(breakTimer.value);
@@ -137,14 +161,30 @@ const formattedTime = computed(() => {
   const sec = (timeLeft.value % 60).toString().padStart(2, "0");
   return `${min}:${sec}`;
 });
+
+const volume = ref(30);
+const alarm = ref(null);
+
+const playAudio = () => {
+  if (alarm.value) {
+    alarm.value.volume = volume.value / 100;
+    alarm.value
+      .play()
+      .catch((error) => console.error("Ошибка воспроизведения:", error));
+  }
+};
 </script>
 
 <style scoped>
 .container {
-  display: flex;
-  height: 76vh;
   font-size: 36px;
   margin: 10px;
+}
+
+.wrapper {
+  display: flex;
+  height: 70vh;
+  position: relative;
 }
 
 .work,
@@ -223,5 +263,28 @@ const formattedTime = computed(() => {
   position: relative;
   top: -50px;
   transition: all 0.5s ease;
+}
+
+.volume-wrapper {
+  position: absolute;
+  bottom: 20px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+}
+
+.volume-wrapper:hover .slider {
+  display: block;
+}
+
+.volume {
+  width: 30px;
+}
+
+.slider {
+  display: none;
 }
 </style>
