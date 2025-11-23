@@ -7,30 +7,17 @@
 5. A Weather module that lets users search for cities, fetch detailed weather data from an external API, and view current conditions, hourly forecasts, and a 3-day outlook, with error handling, debounced search, and asynchronous loading via Vue's Suspense.
 6. I also learned how to implement responsive design by using CSS media queries, ensuring the interface adapts smoothly to different screen sizes.
 
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
+## Installation
+1. Clone the repo
+```sh
+git clone https://github.com/Koteykee/VuePosts
+```
+2. Install NPM packages
 ```sh
 npm install
 ```
-
-### Compile and Hot-Reload for Development
-
+3. Run application
 ```sh
 npm run dev
 ```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+Done! 😄
