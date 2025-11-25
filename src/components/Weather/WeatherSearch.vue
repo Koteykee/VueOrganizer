@@ -52,7 +52,7 @@ const getSearchResults = () => {
     if (searchQuery.value !== "") {
       try {
         const result = await axios.get(
-          `http://api.weatherapi.com/v1/search.json?key=${APIKey}&q=${searchQuery.value}`
+          `https://api.weatherapi.com/v1/search.json?key=${APIKey}&q=${searchQuery.value}`
         );
         searchResults.value = result.data;
       } catch {

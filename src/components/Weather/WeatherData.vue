@@ -85,7 +85,7 @@ const { city } = defineProps({
 const getWeatherData = async () => {
   try {
     const weatherData = await axios.get(
-      `http://api.weatherapi.com/v1/forecast.json?key=11248aa345d4458b96283937251505&q=${city}&days=3&aqi=no&alerts=no`
+      `https://api.weatherapi.com/v1/forecast.json?key=11248aa345d4458b96283937251505&q=${city}&days=3&aqi=no&alerts=no`
     );
 
     return weatherData.data;
